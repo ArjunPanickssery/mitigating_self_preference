@@ -57,7 +57,7 @@ class ModelWrapper:
         """Generates token probabilities"""
         raise NotImplementedError
 
-    def generate_summary(self, article: Article) -> Summary:
+    def summarize(self, article: Article) -> Summary:
         """Generates a summary for the given article."""
         system_prompt = SUMMARIZATION_SYSTEM_PROMPTS[article.dataset]
         prompt = SUMMARIZATION_PROMPTS[article.dataset].format(article=article.text)
@@ -133,15 +133,14 @@ class HuggingFaceWrapper(ModelWrapper):
         )
         output = self.model.generate(
             input_ids,
-            max_length=MAX_LENGTH,
+            max_new_tokens=MAX_LENGTH,
             num_return_sequences=1,
             pad_token_id=self.tokenizer.eos_token_id,  # Set pad_token_id to EOS token ID to avoid padding
         )
         decoded = self.tokenizer.decode(
             output[0][input_ids.shape[1] :], skip_special_tokens=True
         )  # Decode only the generated tokens
-        response = self._extract_argument_from_response(decoded)
-        return response
+        return decoded
 
     def _get_token_probs(
         self,
