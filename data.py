@@ -1,5 +1,5 @@
 from dataclasses import asdict, dataclass
-from typing import List
+from typing import List, Dict
 import json
 import os
 
@@ -23,6 +23,15 @@ class Summary:
     article_id: str
     source: str
     text: str
+
+@dataclass
+class EvalResult:
+    evaluator: str
+    other_model: str
+    article_id: str
+    self_summary: Summary
+    other_summary: Summary
+    scores: Dict[str, float] # recognition/preference, _with_temperature_scaling, _with_perturbation, _with_averaging, _with_unlearning  
 
 
 def save_to_json(dictionary: dict, file_name: str):

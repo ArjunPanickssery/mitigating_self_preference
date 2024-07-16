@@ -179,6 +179,8 @@ class Llama2Wrapper(HuggingFaceWrapper):
         <</SYS>>
         {user_prompt} [/INST] {words_in_mouth}""".strip()
 
+    def _response(self, system_prompt: str, user_prompt: str, words_in_mouth="") -> str:
+        return super()._response(system_prompt, user_prompt, words_in_mouth if words_in_mouth else "Here")
 
 # meta-llama/Meta-Llama-3-8B-Instruct, etc
 class Llama3Wrapper(HuggingFaceWrapper):
@@ -193,6 +195,9 @@ class Llama3Wrapper(HuggingFaceWrapper):
 {user_prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 
 {words_in_mouth}"""
+
+    def _response(self, system_prompt: str, user_prompt: str, words_in_mouth="") -> str:
+        return super()._response(system_prompt, user_prompt, words_in_mouth if words_in_mouth else "Here")
 
 
 # google/gemma-2-9b, google/gemma-2-27b
