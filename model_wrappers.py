@@ -180,7 +180,10 @@ class Llama2Wrapper(HuggingFaceWrapper):
         {user_prompt} [/INST] {words_in_mouth}""".strip()
 
     def _response(self, system_prompt: str, user_prompt: str, words_in_mouth="") -> str:
-        return super()._response(system_prompt, user_prompt, words_in_mouth if words_in_mouth else "Here")
+        return super()._response(
+            system_prompt, user_prompt, words_in_mouth if words_in_mouth else "Here"
+        )
+
 
 # meta-llama/Meta-Llama-3-8B-Instruct, etc
 class Llama3Wrapper(HuggingFaceWrapper):
@@ -197,7 +200,9 @@ class Llama3Wrapper(HuggingFaceWrapper):
 {words_in_mouth}"""
 
     def _response(self, system_prompt: str, user_prompt: str, words_in_mouth="") -> str:
-        return super()._response(system_prompt, user_prompt, words_in_mouth if words_in_mouth else "Here")
+        return super()._response(
+            system_prompt, user_prompt, words_in_mouth if words_in_mouth else "Here"
+        )
 
 
 # google/gemma-2-9b, google/gemma-2-27b
@@ -253,11 +258,11 @@ class GPTWrapper(ModelWrapper):
         )
 
         token_probs = {token: 0 for token in response_tokens}
-        logprobs = response.choices[0].logprobs.top_logprobs[0]
+        logprobs = response.choices[0].logprobs.content[0].top_logprobs
 
-        for token, logprob in logprobs.items():
-            if token in token_probs:
-                token_probs[token] = math.exp(logprob)
+        for item in logprobs:
+            if item.token in token_probs:
+                token_probs[item.token] = math.exp(item.logprob)
 
         total_prob = sum(token_probs.values())
         return {k: v / total_prob for k, v in token_probs.items()}
